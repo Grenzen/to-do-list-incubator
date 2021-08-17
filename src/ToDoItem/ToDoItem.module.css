@@ -1,0 +1,18 @@
+.listItem {
+    margin: 5px 0;
+    display: flex;
+    align-items: center;
+}
+
+.done {
+    opacity: 0.7;
+    text-decoration: line-through;
+}
+
+.undone {
+    font-weight: 500;
+}
+
+.container {
+    display: inline-flex;
+}
