@@ -3,10 +3,18 @@ import s from './Button.module.css'
 
 type ButtonPropTypes = {
     itemId: string
-    deleteTaskCallback: (id: string) => void
+    toDoListId: string
+    deleteTaskCallback: (taskId: string, toDoListId: string) => void
 }
 
-export const Button:React.FC<ButtonPropTypes> = ({ itemId, deleteTaskCallback }) => {
-    const removeHandler = () => deleteTaskCallback(itemId)
-    return <button className={s.deleteButton} onClick={ removeHandler }>x</button>
+export const Button: React.FC<ButtonPropTypes> = (
+    {
+        itemId,
+        toDoListId,
+        deleteTaskCallback
+    }) => {
+
+    const deleteCallback = () => deleteTaskCallback(itemId, toDoListId)
+
+    return <button className={ s.deleteButton } onClick={ deleteCallback }>x</button>
 }

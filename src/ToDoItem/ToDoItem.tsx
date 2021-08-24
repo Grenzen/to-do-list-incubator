@@ -3,33 +3,40 @@ import { Button } from '../components/Button'
 import s from './ToDoItem.module.css'
 
 type ToDoItemPropTypes = {
-    id: string
+    taskId: string
+    toDoListId: string
     title: string
     isDone: boolean
-    deleteTaskCallback: (id: string) => void
-    changeSelectedCallback: (id: string, select: boolean) => void
+    deleteTaskCallback: (taskId: string, toDoListId: string) => void
+    changeSelectedCallback: (taskId: string, select: boolean, toDoListId: string) => void
 }
 
 export const ToDoItem: React.FC<ToDoItemPropTypes> = (
-    { isDone, title, id, deleteTaskCallback, changeSelectedCallback }
-) => {
+    {
+        taskId, toDoListId,
+        title, isDone,
+        deleteTaskCallback, changeSelectedCallback,
+    }) => {
 
-    const onChangeHandler = (e: ChangeEvent) => changeSelectedCallback(id, (e.currentTarget as HTMLInputElement).checked)
+    const onChangeTaskStatus = (e: ChangeEvent) =>
+        changeSelectedCallback(taskId, (e.currentTarget as HTMLInputElement).checked, toDoListId)
+
     return (
-        <li className={s.listItem}>
+        <li className={ s.listItem }>
             <Button
-                itemId={ id }
+                itemId={ taskId }
+                toDoListId={ toDoListId }
                 deleteTaskCallback={ deleteTaskCallback }
             >
             </Button>
-        <div className={s.container}>
-            <input
-                type="checkbox"
-                checked={ isDone }
-                onChange={ onChangeHandler }
-            />
-            <span className={ isDone ? s.done : s.undone }>{ title }</span>
-        </div>
+            <div className={ s.container }>
+                <input
+                    type="checkbox"
+                    checked={ isDone }
+                    onChange={ onChangeTaskStatus }
+                />
+                <span className={ isDone ? s.done : s.undone }>{ title }</span>
+            </div>
         </li>
     )
 }
