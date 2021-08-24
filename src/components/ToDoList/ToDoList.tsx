@@ -1,7 +1,10 @@
-import React, { useState, MouseEvent, ChangeEvent, KeyboardEvent } from 'react'
+import React, { useState, MouseEvent } from 'react'
 import { ToDoItem } from '../ToDoItem/ToDoItem'
-import { FilterPropTypes, TaskPropTypes } from '../App'
+import { FilterPropTypes, TaskPropTypes } from '../../App'
 import s from './ToDoList.module.css'
+import { AddItemForm } from '../AddItemForm/AddItemForm'
+import { Button } from '../Button/Button'
+import { EditableTitle } from '../EditableTitle/EditableTitle'
 
 
 export type ToDoListPropTypes = {
@@ -14,6 +17,8 @@ export type ToDoListPropTypes = {
     deleteTaskCallback: (taskId: string, toDoListId: string) => void
     changeSelectedCallback: (taskId: string, select: boolean, toDoListId: string) => void
     deleteToDoListCallback: (toDoListId: string) => void
+    changeToDoListTitleCallback: (title: string, toDoListId: string) => void
+    changeTaskTitleCallback: (taskId: string, title: string, toDoListId: string) => void
 }
 
 export const ToDoList: React.FC<ToDoListPropTypes> = (
@@ -21,23 +26,22 @@ export const ToDoList: React.FC<ToDoListPropTypes> = (
         toDoListId, filter, title, tasks,
         changeFilterCallback, deleteTaskCallback,
         addTaskCallback, changeSelectedCallback,
-        deleteToDoListCallback,
+        deleteToDoListCallback, changeToDoListTitleCallback,
+        changeTaskTitleCallback,
     }) => {
 
-    const [error, setError] = useState<string>('')
     const [newTitle, setNewTitle] = useState<string>('')
-
-    const inputStyle = error.length ? s.error : s.correct
 
     const mappedTasks = tasks.map((task) => (
         <ToDoItem
+            key={ task.id }
             taskId={ task.id }
             toDoListId={ toDoListId }
             title={ task.title }
             isDone={ task.isDone }
             deleteTaskCallback={ deleteTaskCallback }
             changeSelectedCallback={ changeSelectedCallback }
-            key={ task.id }
+            changeTaskTitleCallback={ changeTaskTitleCallback }
         />
     ))
 
@@ -45,39 +49,26 @@ export const ToDoList: React.FC<ToDoListPropTypes> = (
         const value = (event.target as HTMLElement).innerText as FilterPropTypes
         changeFilterCallback(value, toDoListId)
     }
-    const addError = () => {
-        setError(() => 'Title is required')
-        setNewTitle(() => '')
-    }
-    const addNewTask = () => {
-        setNewTitle(() => '')
-        addTaskCallback(newTitle, toDoListId)
-    }
-    const onAddTitleHandler = () => newTitle.trim().length ? addNewTask() : addError()
-    const onChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
-        setError(() => '')
-        const value = event.target?.value
-        setNewTitle(() => value)
-    }
-    const onKeyPressHandler = (event: KeyboardEvent) => {
-        if (event.key === 'Enter') onAddTitleHandler()
-    }
-    const deleteToDoList = () => deleteToDoListCallback(toDoListId)
 
     return (
         <div className={ s.toDoListContainer }>
-            <button onClick={ deleteToDoList }>X</button>
-            <h3>{ title }
+            <h3><Button
+                toDoListId={ toDoListId }
+                deleteToDoListCallback={ deleteToDoListCallback }
+            />
+                <EditableTitle
+                    title={ title }
+                    toDoListId={ toDoListId }
+                    changeToDoListTitleCallback={ changeToDoListTitleCallback }
+                />
             </h3>
-            <div>
-                <input
-                    className={ [inputStyle, s.commonInput].join(' ') }
-                    value={ newTitle }
-                    onChange={ onChangeHandler }
-                    onKeyPress={ onKeyPressHandler }/>
-                <button onClick={ onAddTitleHandler }> +</button>
-                <span className={ s.errorMessage }>{ error }</span>
-            </div>
+            <AddItemForm
+                formTitle={ 'Add new item' }
+                value={ newTitle }
+                toDoListId={ toDoListId }
+                setValueCallback={ setNewTitle }
+                addTaskCallback={ addTaskCallback }
+            />
             <ul className={ s.list }>
                 { mappedTasks }
             </ul>

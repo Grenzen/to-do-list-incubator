@@ -1,6 +1,7 @@
 import React, { ChangeEvent } from 'react'
-import { Button } from '../components/Button'
+import { Button } from '../Button/Button'
 import s from './ToDoItem.module.css'
+import { EditableTitle } from '../EditableTitle/EditableTitle'
 
 type ToDoItemPropTypes = {
     taskId: string
@@ -9,6 +10,7 @@ type ToDoItemPropTypes = {
     isDone: boolean
     deleteTaskCallback: (taskId: string, toDoListId: string) => void
     changeSelectedCallback: (taskId: string, select: boolean, toDoListId: string) => void
+    changeTaskTitleCallback: (taskId: string, title: string, toDoListId: string) => void
 }
 
 export const ToDoItem: React.FC<ToDoItemPropTypes> = (
@@ -16,6 +18,7 @@ export const ToDoItem: React.FC<ToDoItemPropTypes> = (
         taskId, toDoListId,
         title, isDone,
         deleteTaskCallback, changeSelectedCallback,
+        changeTaskTitleCallback,
     }) => {
 
     const onChangeTaskStatus = (e: ChangeEvent) =>
@@ -35,7 +38,14 @@ export const ToDoItem: React.FC<ToDoItemPropTypes> = (
                     checked={ isDone }
                     onChange={ onChangeTaskStatus }
                 />
-                <span className={ isDone ? s.done : s.undone }>{ title }</span>
+                <span className={ isDone ? s.done : s.undone }>
+                    <EditableTitle
+                        title={ title }
+                        taskId={ taskId }
+                        toDoListId={ toDoListId }
+                        changeTaskTitleCallback={ changeTaskTitleCallback }
+                    />
+                </span>
             </div>
         </li>
     )

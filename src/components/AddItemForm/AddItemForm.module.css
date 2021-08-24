@@ -1,0 +1,21 @@
+.fromTitle {
+    margin: 0;
+}
+
+.correct {
+    border: 1px solid black;
+}
+
+.error {
+    border: 1px solid red;
+}
+
+.errorMessage {
+    display: block;
+    color: red;
+    font-size: 0.8rem;
+}
+
+.commonInput {
+    outline: none;
+}
