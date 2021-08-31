@@ -3,84 +3,25 @@ import { v1 } from 'uuid'
 import { ToDoList } from './components/ToDoList/ToDoList'
 import { AddItemForm } from './components/AddItemForm/AddItemForm'
 import s from './App.module.css'
-
+import {
+    addTask, addToDoList,
+    changeSelected, changeTaskTitle,
+    changeToDoListFilter, changeToDoListTitle, createNewTasksArray,
+    deleteTask, deleteToDoList, deleteTasks, filterTasks,
+} from './pureFunctions'
 // Types
-
 export type FilterPropTypes = 'All' | 'Active' | 'Completed'
-
 export type ToDoListTypes = {
     id: string
     title: string
     filter: FilterPropTypes
 }
-
 export type TaskPropTypes = {
     id: string
     title: string
     isDone: boolean
 }
-
 export type TaskStateTypes = { [ key: string ]: Array<TaskPropTypes> }
-
-// Pure Functions
-export const addToDoList = (
-    toDoLists: Array<ToDoListTypes>,
-    newToDoListId: string,
-    title: string,
-): Array<ToDoListTypes> => {
-    return [...toDoLists, { id: newToDoListId, title, filter: 'All' }]
-}
-export const addTask = (tasks: TaskStateTypes, title: string, toDoListId: string): TaskStateTypes => {
-    const task = { id: v1(), title, isDone: false }
-    return { ...tasks, [ toDoListId ]: [task, ...tasks[ toDoListId ]] }
-}
-export const deleteTask = (tasks: TaskStateTypes, taskId: string, toDoListId: string): TaskStateTypes => {
-    return { ...tasks, [ toDoListId ]: tasks[ toDoListId ].filter(t => t.id !== taskId) }
-}
-export const deleteToDoListAndTasks = (
-    toDoLists: Array<ToDoListTypes>,
-    tasks: TaskStateTypes,
-    toDoListsId: string,
-): Array<ToDoListTypes> => {
-    delete tasks[ toDoListsId ]
-    return toDoLists.filter(tdl => tdl.id !== toDoListsId)
-}
-export const changeSelected = (
-    tasks: TaskStateTypes,
-    taskId: string,
-    isDone: boolean,
-    toDoListId: string,
-): TaskStateTypes => {
-    return {
-        ...tasks,
-        [ toDoListId ]: tasks[ toDoListId ].map(task => task.id === taskId ? { ...task, isDone } : task),
-    }
-}
-export const changeToDoListFilter = (
-    toDoLists: Array<ToDoListTypes>,
-    filter: FilterPropTypes,
-    toDoListId: string,
-): Array<ToDoListTypes> => {
-    return toDoLists.map(tdl => tdl.id === toDoListId ? { ...tdl, filter } : tdl)
-}
-export const changeToDoListTitle = (
-    toDoLists: Array<ToDoListTypes>,
-    title: string,
-    toDoListId: string,
-): Array<ToDoListTypes> => {
-    return toDoLists.map(tdl => tdl.id === toDoListId ? { ...tdl, title } : tdl)
-}
-export const changeTaskTitle = (
-    tasks: TaskStateTypes,
-    taskId: string,
-    title: string,
-    toDoListId: string,
-): TaskStateTypes => {
-    return {
-        ...tasks,
-        [ toDoListId ]: tasks[ toDoListId ].map(task => task.id === taskId ? { ...task, title } : task),
-    }
-}
 
 export const App = () => {
     const toDoListId1 = v1()
@@ -113,27 +54,20 @@ export const App = () => {
         setToDoLists(() => changeToDoListFilter(toDoLists, filter, toDoListId))
     const deleteTaskCallback = (taskId: string, toDoListId: string) =>
         setTasks(() => deleteTask(tasks, taskId, toDoListId))
-    const deleteToDoListCallback = (toDoListsId: string) =>
-        setToDoLists(() => deleteToDoListAndTasks(toDoLists, tasks, toDoListsId))
+    const deleteToDoListCallback = (toDoListsId: string) => {
+        setToDoLists(() => deleteToDoList(toDoLists, toDoListsId))
+        setTasks(() => deleteTasks(tasks, toDoListsId))
+    }
     const addTaskCallback = (title: string, toDoListId: string) =>
         setTasks(() => addTask(tasks, title, toDoListId))
     const addToDoListCallback = (title: string) => {
         const newToDoListId = v1()
         setToDoLists(() => addToDoList(toDoLists, newToDoListId, title))
-        setTasks({ ...tasks, [ newToDoListId ]: [] })
+        setTasks(() => createNewTasksArray(tasks, newToDoListId))
     }
 
     const mappedToDoList = toDoLists.map(tdl => {
-        let tasksForToDoList = tasks[ tdl.id ]
-        switch (tdl.filter) {
-            case ('Active'):
-                tasksForToDoList = tasks[ tdl.id ].filter(t => !t.isDone)
-                break
-            case ('Completed'):
-                tasksForToDoList = tasks[ tdl.id ].filter(t => t.isDone)
-                break
-        }
-
+        let tasksForToDoList = filterTasks(tasks[ tdl.id ], tdl.filter)
         return <ToDoList
             toDoListId={ tdl.id }
             key={ tdl.id }

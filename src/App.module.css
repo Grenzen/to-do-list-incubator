@@ -11,6 +11,7 @@
 
 .toDoListContainer {
     width: 95vw;
+    min-width: 17rem;
     margin: 1rem 0;
     padding: 1rem;
     border: 1px solid #2f2c2c;
