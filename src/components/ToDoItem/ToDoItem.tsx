@@ -1,7 +1,8 @@
 import React, { ChangeEvent } from 'react'
-import { Button } from '../Button/Button'
 import s from './ToDoItem.module.css'
 import { EditableTitle } from '../EditableTitle/EditableTitle'
+import { Checkbox, IconButton } from '@material-ui/core'
+import { Delete } from '@material-ui/icons'
 
 type ToDoItemPropTypes = {
     taskId: string
@@ -24,17 +25,15 @@ export const ToDoItem: React.FC<ToDoItemPropTypes> = (
     const onChangeTaskStatus = (e: ChangeEvent) =>
         changeSelectedCallback(taskId, (e.currentTarget as HTMLInputElement).checked, toDoListId)
 
+    const deleteTask = () => deleteTaskCallback(taskId, toDoListId)
     return (
-        <li className={ s.listItem }>
-            <Button
-                itemId={ taskId }
-                toDoListId={ toDoListId }
-                deleteTaskCallback={ deleteTaskCallback }
-            >
-            </Button>
+        <div className={ s.listItem }>
+            <IconButton onClick={ deleteTask }>
+                <Delete/>
+            </IconButton>
             <div className={ s.container }>
-                <input
-                    type="checkbox"
+                <Checkbox
+                    color={ 'primary' }
                     checked={ isDone }
                     onChange={ onChangeTaskStatus }
                 />
@@ -47,6 +46,6 @@ export const ToDoItem: React.FC<ToDoItemPropTypes> = (
                     />
                 </span>
             </div>
-        </li>
+        </div>
     )
 }

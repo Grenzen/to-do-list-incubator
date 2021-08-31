@@ -2,13 +2,15 @@ import React, { useState } from 'react'
 import { v1 } from 'uuid'
 import { ToDoList } from './components/ToDoList/ToDoList'
 import { AddItemForm } from './components/AddItemForm/AddItemForm'
-import s from './App.module.css'
 import {
     addTask, addToDoList,
     changeSelected, changeTaskTitle,
     changeToDoListFilter, changeToDoListTitle, createNewTasksArray,
     deleteTask, deleteToDoList, deleteTasks, filterTasks,
 } from './pureFunctions'
+import { AppBar, Container, Grid, IconButton, Toolbar, Typography } from '@material-ui/core'
+import { Menu } from '@material-ui/icons'
+import AccountCircle from '@material-ui/icons/AccountCircle'
 // Types
 export type FilterPropTypes = 'All' | 'Active' | 'Completed'
 export type ToDoListTypes = {
@@ -54,9 +56,9 @@ export const App = () => {
         setToDoLists(() => changeToDoListFilter(toDoLists, filter, toDoListId))
     const deleteTaskCallback = (taskId: string, toDoListId: string) =>
         setTasks(() => deleteTask(tasks, taskId, toDoListId))
-    const deleteToDoListCallback = (toDoListsId: string) => {
-        setToDoLists(() => deleteToDoList(toDoLists, toDoListsId))
-        setTasks(() => deleteTasks(tasks, toDoListsId))
+    const deleteToDoListCallback = (toDoListId: string) => {
+        setToDoLists(deleteToDoList(toDoLists, toDoListId))
+        setTasks(deleteTasks(tasks, toDoListId))
     }
     const addTaskCallback = (title: string, toDoListId: string) =>
         setTasks(() => addTask(tasks, title, toDoListId))
@@ -85,16 +87,39 @@ export const App = () => {
     })
 
     return (
-        <div className={ s.App }>
-            <AddItemForm
-                formTitle={ 'Add new to do list' }
-                value={ newToDoListTitle }
-                setValueCallback={ setNewToDoListTitle }
-                addToDoListCallback={ addToDoListCallback }
-            />
-            <div className={ s.toDoListContainer }>
-                { mappedToDoList }
-            </div>
+        <div>
+            <AppBar position={ 'static' }>
+                <Toolbar>
+                    <IconButton
+                        edge={ 'start' }
+                        color={ 'inherit' }
+                        aria-label={ 'menu' }
+                    >
+                        <Menu/>
+                    </IconButton>
+                    <Typography variant={ 'h6' }>
+                        To Do Clone
+                    </Typography>
+                    <IconButton
+                        color={ 'inherit' }
+                        aria-label={ 'login' }
+                    >
+                        <AccountCircle/>
+                    </IconButton>
+                </Toolbar>
+            </AppBar>
+            <Container fixed>
+                <Grid container style={ { padding: '20px' } }>
+                    <AddItemForm
+                        value={ newToDoListTitle }
+                        setValueCallback={ setNewToDoListTitle }
+                        addToDoListCallback={ addToDoListCallback }
+                    />
+                </Grid>
+                <Grid container spacing={ 1 }>
+                    { mappedToDoList }
+                </Grid>
+            </Container>
         </div>
     )
 }

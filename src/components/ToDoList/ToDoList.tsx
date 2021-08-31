@@ -1,10 +1,10 @@
 import React, { useState, MouseEvent } from 'react'
 import { ToDoItem } from '../ToDoItem/ToDoItem'
 import { FilterPropTypes, TaskPropTypes } from '../../App'
-import s from './ToDoList.module.css'
 import { AddItemForm } from '../AddItemForm/AddItemForm'
-import { Button } from '../Button/Button'
 import { EditableTitle } from '../EditableTitle/EditableTitle'
+import { Button, Grid, IconButton, Paper } from '@material-ui/core'
+import { Delete } from '@material-ui/icons'
 
 
 export type ToDoListPropTypes = {
@@ -46,49 +46,59 @@ export const ToDoList: React.FC<ToDoListPropTypes> = (
     ))
 
     const changeFilter = (event: MouseEvent<HTMLButtonElement>) => {
-        const value = (event.target as HTMLElement).innerText as FilterPropTypes
-        changeFilterCallback(value, toDoListId)
+        const value = event.currentTarget.innerText
+            .split('')
+            .map((letter, idx) => idx > 0 ? letter.toLowerCase() : letter)
+            .join('')
+        changeFilterCallback(value as FilterPropTypes, toDoListId)
     }
 
+    const deleteToDoListId = () => deleteToDoListCallback(toDoListId)
+
     return (
-        <div className={ s.toDoListContainer }>
-            <h3><Button
-                toDoListId={ toDoListId }
-                deleteToDoListCallback={ deleteToDoListCallback }
-            />
-                <EditableTitle
-                    title={ title }
+        <Grid item>
+            <Paper style={ { padding: '10px' } }>
+                <h3>
+                    <IconButton tabIndex={ toDoListId } onClick={ deleteToDoListId }>
+                        <Delete/>
+                    </IconButton>
+                    <EditableTitle
+                        title={ title }
+                        toDoListId={ toDoListId }
+                        changeToDoListTitleCallback={ changeToDoListTitleCallback }
+                    />
+                </h3>
+                <AddItemForm
+                    value={ newTitle }
                     toDoListId={ toDoListId }
-                    changeToDoListTitleCallback={ changeToDoListTitleCallback }
+                    setValueCallback={ setNewTitle }
+                    addTaskCallback={ addTaskCallback }
                 />
-            </h3>
-            <AddItemForm
-                formTitle={ 'Add new item' }
-                value={ newTitle }
-                toDoListId={ toDoListId }
-                setValueCallback={ setNewTitle }
-                addTaskCallback={ addTaskCallback }
-            />
-            <ul className={ s.list }>
                 { mappedTasks }
-            </ul>
-            <div>
-                <button
-                    className={ filter === 'All' ? s.buttonActive : s.buttonCommon }
-                    onClick={ changeFilter }
-                >All
-                </button>
-                <button
-                    className={ filter === 'Active' ? s.buttonActive : s.buttonCommon }
-                    onClick={ changeFilter }
-                >Active
-                </button>
-                <button
-                    className={ filter === 'Completed' ? s.buttonActive : s.buttonCommon }
-                    onClick={ changeFilter }
-                >Completed
-                </button>
-            </div>
-        </div>
+                <div>
+                    <Button
+                        size={ 'small' }
+                        onClick={ changeFilter }
+                        variant={ 'contained' }
+                        color={ filter === 'All' ? 'primary' : 'default' }
+                    >All
+                    </Button>
+                    <Button
+                        size={ 'small' }
+                        onClick={ changeFilter }
+                        variant={ 'contained' }
+                        color={ filter === 'Active' ? 'primary' : 'default' }
+                    >Active
+                    </Button>
+                    <Button
+                        size={ 'small' }
+                        onClick={ changeFilter }
+                        variant={ 'contained' }
+                        color={ filter === 'Completed' ? 'primary' : 'default' }
+                    >Completed
+                    </Button>
+                </div>
+            </Paper>
+        </Grid>
     )
 }

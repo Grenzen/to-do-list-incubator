@@ -1,8 +1,8 @@
 import React, { ChangeEvent, KeyboardEvent, useState } from 'react'
-import s from './AddItemForm.module.css'
+import { IconButton, TextField } from '@material-ui/core'
+import { AddBox } from '@material-ui/icons'
 
 export type AddItemFormTypes = {
-    formTitle: string
     value: string
     setValueCallback: (value: string) => void
     toDoListId?: string
@@ -12,12 +12,11 @@ export type AddItemFormTypes = {
 
 export const AddItemForm: React.FC<AddItemFormTypes> = (
     {
-        formTitle, value, setValueCallback,
+        value, setValueCallback,
         toDoListId, addTaskCallback,
         addToDoListCallback,
     }) => {
     const [error, setError] = useState<string>('')
-    const inputStyle = error.length ? s.error : s.correct
 
     const addError = () => {
         setError(() => 'Title is required')
@@ -40,19 +39,22 @@ export const AddItemForm: React.FC<AddItemFormTypes> = (
 
     return (
         <>
-            <h4 className={ s.fromTitle }>{ formTitle }</h4>
             <div>
-                <input
-                    className={ [inputStyle, s.commonInput].join(' ') }
+                <TextField
                     value={ value }
+                    variant={ 'outlined' }
+                    error={ !!error }
                     onChange={ onChangeValue }
                     onKeyPress={ onKeyPressValue }
+                    helperText={ error }
+                    label={ 'Title' }
                 />
-                <button
+                <IconButton
+                    color={ 'primary' }
                     onClick={ onAddValue }
-                > +
-                </button>
-                <span className={ s.errorMessage }>{ error }</span>
+                >
+                    <AddBox/>
+                </IconButton>
             </div>
         </>
     )

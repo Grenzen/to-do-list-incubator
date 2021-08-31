@@ -1,4 +1,5 @@
 import React, { ChangeEvent, KeyboardEvent, useState } from 'react'
+import { TextField } from '@material-ui/core'
 
 type EditableTitleTypes = {
     title: string
@@ -30,9 +31,9 @@ export const EditableTitle: React.FC<EditableTitleTypes> = (
     }
 
     return editMode
-        ? <input
+        ? <TextField
             value={ localTitle }
-            autoFocus={ true }
+            autoFocus
             onChange={ changeLocalTitle }
             onKeyPress={ onKeyPressActivateViewMode }
             onBlur={ activateViewMode }
