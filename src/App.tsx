@@ -3,14 +3,14 @@ import { v1 } from 'uuid'
 import { ToDoList } from './components/ToDoList/ToDoList'
 import { AddItemForm } from './components/AddItemForm/AddItemForm'
 import {
-    addTask, addToDoList,
-    changeSelected, changeTaskTitle,
-    changeToDoListFilter, changeToDoListTitle, createNewTasksArray,
-    deleteTask, deleteToDoList, deleteTasks, filterTasks,
+    addTask, changeSelected, changeTaskTitle, createNewTasksArray,
+    deleteTask, deleteTasks, filterTasks,
 } from './pureFunctions'
 import { AppBar, Container, Grid, IconButton, Toolbar, Typography } from '@material-ui/core'
 import { Menu } from '@material-ui/icons'
 import AccountCircle from '@material-ui/icons/AccountCircle'
+import { todolistsReducer } from './state/reducers/todolists'
+import * as todolistsActions from './state/actions/todolists'
 // Types
 export type FilterPropTypes = 'All' | 'Active' | 'Completed'
 export type ToDoListTypes = {
@@ -48,25 +48,28 @@ export const App = () => {
 
     const changeTaskTitleCallback = (taskId: string, title: string, toDoListId: string) =>
         setTasks(() => changeTaskTitle(tasks, taskId, title, toDoListId))
-    const changeToDoListTitleCallback = (title: string, toDoListId: string) =>
-        setToDoLists(() => changeToDoListTitle(toDoLists, title, toDoListId))
     const changeSelectedCallback = (taskId: string, select: boolean, toDoListId: string) =>
         setTasks(() => changeSelected(tasks, taskId, select, toDoListId))
-    const changeFilterCallback = (filter: FilterPropTypes, toDoListId: string) =>
-        setToDoLists(() => changeToDoListFilter(toDoLists, filter, toDoListId))
     const deleteTaskCallback = (taskId: string, toDoListId: string) =>
         setTasks(() => deleteTask(tasks, taskId, toDoListId))
-    const deleteToDoListCallback = (toDoListId: string) => {
-        setToDoLists(deleteToDoList(toDoLists, toDoListId))
-        setTasks(deleteTasks(tasks, toDoListId))
-    }
     const addTaskCallback = (title: string, toDoListId: string) =>
         setTasks(() => addTask(tasks, title, toDoListId))
+
+    // with reducers
+    const deleteToDoListCallback = (toDoListId: string) => {
+        setToDoLists(() => todolistsReducer(toDoLists, todolistsActions.removeTodoList(toDoListId)))
+        setTasks(deleteTasks(tasks, toDoListId))
+    }
     const addToDoListCallback = (title: string) => {
         const newToDoListId = v1()
-        setToDoLists(() => addToDoList(toDoLists, newToDoListId, title))
+        setToDoLists(() => todolistsReducer(toDoLists, todolistsActions.addTodoList(title, newToDoListId)))
         setTasks(() => createNewTasksArray(tasks, newToDoListId))
     }
+    const changeToDoListTitleCallback = (title: string, toDoListId: string) =>
+        setToDoLists(() => todolistsReducer(toDoLists, todolistsActions.changeTodoListTitle(toDoListId, title)))
+    const changeFilterCallback = (filter: FilterPropTypes, toDoListId: string) =>
+        setToDoLists(todolistsReducer(toDoLists, todolistsActions.changeTodoListFilter(toDoListId, filter)))
+
 
     const mappedToDoList = toDoLists.map(tdl => {
         let tasksForToDoList = filterTasks(tasks[ tdl.id ], tdl.filter)
