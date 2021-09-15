@@ -1,6 +1,6 @@
 import React, { useState, MouseEvent } from 'react'
 import { ToDoItem } from '../ToDoItem/ToDoItem'
-import { FilterPropTypes, TaskPropTypes } from '../../App'
+import { FilterPropTypes, TaskTypes } from '../../App'
 import { AddItemForm } from '../AddItemForm/AddItemForm'
 import { EditableTitle } from '../EditableTitle/EditableTitle'
 import { Button, Grid, IconButton, Paper } from '@material-ui/core'
@@ -11,7 +11,7 @@ export type ToDoListPropTypes = {
     toDoListId: string
     filter: FilterPropTypes
     title: string
-    tasks: Array<TaskPropTypes>
+    tasks: Array<TaskTypes>
     changeFilterCallback: (filter: FilterPropTypes, toDoListId: string) => void
     addTaskCallback: (title: string, toDoListId: string) => void
     deleteTaskCallback: (taskId: string, toDoListId: string) => void
@@ -47,9 +47,6 @@ export const ToDoList: React.FC<ToDoListPropTypes> = (
 
     const changeFilter = (event: MouseEvent<HTMLButtonElement>) => {
         const value = event.currentTarget.innerText
-            .split('')
-            .map((letter, idx) => idx > 0 ? letter.toLowerCase() : letter)
-            .join('')
         changeFilterCallback(value as FilterPropTypes, toDoListId)
     }
 
@@ -80,21 +77,21 @@ export const ToDoList: React.FC<ToDoListPropTypes> = (
                         size={ 'small' }
                         onClick={ changeFilter }
                         variant={ 'contained' }
-                        color={ filter === 'All' ? 'primary' : 'default' }
+                        color={ filter === 'ALL' ? 'primary' : 'default' }
                     >All
                     </Button>
                     <Button
                         size={ 'small' }
                         onClick={ changeFilter }
                         variant={ 'contained' }
-                        color={ filter === 'Active' ? 'primary' : 'default' }
+                        color={ filter === 'ACTIVE' ? 'primary' : 'default' }
                     >Active
                     </Button>
                     <Button
                         size={ 'small' }
                         onClick={ changeFilter }
                         variant={ 'contained' }
-                        color={ filter === 'Completed' ? 'primary' : 'default' }
+                        color={ filter === 'COMPLETED' ? 'primary' : 'default' }
                     >Completed
                     </Button>
                 </div>

@@ -1,33 +1,34 @@
 import * as types from '../types/todolists'
 import { FilterPropTypes } from '../../App'
 
-export const removeTodoList = (id: string) => ({
+export const removeTodoList = (todolistId: string) => ({
     type: types.REMOVE_TODOLIST,
     payload: {
-        id,
+        todolistId,
     },
 } as const)
 
-export const addTodoList = (newTodolistTitle: string, id: string) => ({
+export const addTodoList = (newTodolistTitle: string, newTodolistId: string) => ({
     type: types.ADD_TODOLIST,
     payload: {
-        id,
-        title: newTodolistTitle,
+        newTodolistId,
+        newTodolistTitle,
+        newTodolistFilter: 'ALL',
     },
 } as const)
 
 export const changeTodoListTitle = (todolistId: string, newTodolistTitle: string) => ({
     type: types.CHANGE_TODOLIST_TITLE,
     payload: {
-        id: todolistId,
-        title: newTodolistTitle,
+        todolistId,
+        newTodolistTitle,
     },
 } as const)
 
 export const changeTodoListFilter = (todolistId: string, newFilter: FilterPropTypes) => ({
     type: types.CHANGE_TODOLIST_FILTER,
     payload: {
-        id: todolistId,
-        filter: newFilter,
+        todolistId,
+        newFilter,
     },
 } as const)

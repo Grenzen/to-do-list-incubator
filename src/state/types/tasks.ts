@@ -1,0 +1,8 @@
+export const ADD_NEW_TASKS_ARRAY = 'ADD-NEW-TASKS-ARRAY'
+export const ADD_TASK = 'ADD-TASK'
+
+export const REMOVE_TASK = 'REMOVE-TASK'
+export const REMOVE_TASKS_ARRAY = 'REMOVE-TASKS-ARRAY'
+
+export const CHANGE_TASK_TITLE = 'CHANGE-TASK-TITLE'
+export const CHANGE_SELECT = 'CHANGE-SELECT'

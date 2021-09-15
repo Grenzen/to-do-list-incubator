@@ -12,20 +12,24 @@ type ActionType = RemoveTodosType | AddTodosType | ChangeTodosTitleType | Change
 export const todolistsReducer = (state: Array<ToDoListTypes>, action: ActionType): ToDoListTypes[] => {
     switch (action.type) {
         case types.REMOVE_TODOLIST:
-            return state.filter(tdl => tdl.id !== action.payload.id)
+            return state.filter(tdl => tdl.id !== action.payload.todolistId)
         case types.ADD_TODOLIST:
             return [
                 ...state,
                 {
-                    id: action.payload.id,
-                    title: action.payload.title,
-                    filter: 'All',
+                    id: action.payload.newTodolistId,
+                    title: action.payload.newTodolistTitle,
+                    filter: action.payload.newTodolistFilter,
                 },
             ]
         case types.CHANGE_TODOLIST_TITLE:
-            return state.map(tdl => tdl.id === action.payload.id ? { ...tdl, title: action.payload.title } : tdl)
+            return state.map(tdl => tdl.id === action.payload.todolistId ?
+                { ...tdl, title: action.payload.newTodolistTitle } : tdl)
         case types.CHANGE_TODOLIST_FILTER:
-            return state.map(tdl => tdl.id === action.payload.id ? { ...tdl, filter: action.payload.filter } : tdl)
+            return state.map(tdl => tdl.id === action.payload.todolistId ? {
+                ...tdl,
+                filter: action.payload.newFilter,
+            } : tdl)
         default:
             throw new Error(`I don't understand this type`)
     }
