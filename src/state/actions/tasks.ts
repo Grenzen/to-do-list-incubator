@@ -1,6 +1,17 @@
 import * as types from '../types/tasks'
 import { v1 } from 'uuid'
 
+type AddNewTaskArrayType = ReturnType<typeof addNewTaskArray>
+type AddTaskType = ReturnType<typeof addTask>
+type RemoveTaskType = ReturnType<typeof removeTask>
+type RemoveTasksArrayType = ReturnType<typeof removeTasksArray>
+type ChangeTaskTitleType = ReturnType<typeof changeTaskTitle>
+type ChangeSelectType = ReturnType<typeof changeSelect>
+type SetNewTaskTitleType = ReturnType<typeof setNewTaskTitle>
+
+export type ActionsTasksType = AddNewTaskArrayType | AddTaskType | RemoveTaskType |
+    RemoveTasksArrayType | ChangeTaskTitleType | ChangeSelectType | SetNewTaskTitleType
+
 export const addNewTaskArray = (newToDoListId: string) => ({
     type: types.ADD_NEW_TASKS_ARRAY,
     payload: {
@@ -49,4 +60,9 @@ export const changeSelect = (taskId: string, isDone: boolean, toDoListId: string
         isDone,
         toDoListId,
     },
+} as const)
+
+export const setNewTaskTitle = (newTaskTitle: string) => ({
+    type: types.SET_NEW_TASK_TITLE,
+    payload: { newTaskTitle },
 } as const)

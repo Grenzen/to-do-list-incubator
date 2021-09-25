@@ -1,19 +1,36 @@
 import * as types from '../types/tasks'
-import * as actions from '../actions/tasks'
-import { TaskStateTypes, TaskTypes } from '../../App'
 import clone from 'clone-deep'
+import { toDoListId1, toDoListId2 } from './todoLists'
+import { ActionsTasksType } from '../actions/tasks'
+import { v1 } from 'uuid'
 
-export type AddNewTaskArrayType = ReturnType<typeof actions.addNewTaskArray>
-export type AddTaskType = ReturnType<typeof actions.addTask>
-export type RemoveTaskType = ReturnType<typeof actions.removeTask>
-export type RemoveTasksArrayType = ReturnType<typeof actions.removeTasksArray>
-export type ChangeTaskTitleType = ReturnType<typeof actions.changeTaskTitle>
-export type ChangeSelectType = ReturnType<typeof actions.changeSelect>
+export type TaskTypes = {
+    id: string
+    title: string
+    isDone: boolean
+}
+export type TaskStateTypes = {
+    newTaskTitle: string
+    todoLists: { [ key: string ]: Array<TaskTypes> }
+}
 
-export type ActionType = AddNewTaskArrayType | AddTaskType | RemoveTaskType |
-    RemoveTasksArrayType | ChangeTaskTitleType | ChangeSelectType
+const initialState: TaskStateTypes = {
+    newTaskTitle: '',
+    todoLists: {
+        [ toDoListId1 ]: [
+            { id: v1(), title: 'HTML&CSS', isDone: true },
+            { id: v1(), title: 'JS', isDone: true },
+            { id: v1(), title: 'ReactJS', isDone: false },
+        ],
+        [ toDoListId2 ]: [
+            { id: v1(), title: 'Beer', isDone: true },
+            { id: v1(), title: 'Meat', isDone: true },
+            { id: v1(), title: 'Pork', isDone: false },
+        ],
+    },
+}
 
-export const tasksReducer = (state: TaskStateTypes, action: ActionType): TaskStateTypes => {
+export const tasksReducer = (state = initialState, action: ActionsTasksType): TaskStateTypes => {
     switch (action.type) {
         case types.ADD_NEW_TASKS_ARRAY:
             return { ...state, [ action.payload.newToDoListId ]: [] }
@@ -26,34 +43,54 @@ export const tasksReducer = (state: TaskStateTypes, action: ActionType): TaskSta
             const { toDoListId } = action.payload
             return {
                 ...state,
-                [ toDoListId ]: [newTask, ...state[ toDoListId ]],
+                todoLists: {
+                    ...state.todoLists,
+                    [ toDoListId ]: [newTask, ...state.todoLists[ toDoListId ]],
+                },
             }
         case types.REMOVE_TASK:
             return {
                 ...state,
-                [ action.payload.toDoListId ]: state[ action.payload.toDoListId ]
-                    .filter(task => task.id !== action.payload.taskId),
+                todoLists: {
+                    ...state.todoLists,
+                    [ action.payload.toDoListId ]: state.todoLists[ action.payload.toDoListId ]
+                        .filter(task => task.id !== action.payload.taskId),
+                },
             }
         case types.REMOVE_TASKS_ARRAY:
             const cloneState = clone(state)
-            delete cloneState[ action.payload.toDoListsId ]
+            delete cloneState.todoLists[ action.payload.toDoListsId ]
             return { ...cloneState }
         case types.CHANGE_TASK_TITLE:
             return {
                 ...state,
-                [ action.payload.toDoListId ]: state[ action.payload.toDoListId ]
-                    .map(task => task.id === action.payload.taskId ? {
-                        ...task,
-                        title: action.payload.newTitle,
-                    } : task),
+                todoLists: {
+                    ...state.todoLists,
+                    [ action.payload.toDoListId ]: state.todoLists[ action.payload.toDoListId ]
+                        .map(task => task.id === action.payload.taskId ? {
+                            ...task,
+                            title: action.payload.newTitle,
+                        } : task),
+                },
             }
         case types.CHANGE_SELECT:
             return {
                 ...state,
-                [ action.payload.toDoListId ]: state[ action.payload.toDoListId ]
-                    .map(task => task.id === action.payload.taskId ? { ...task, isDone: action.payload.isDone } : task),
+                todoLists: {
+                    ...state.todoLists,
+                    [ action.payload.toDoListId ]: state.todoLists[ action.payload.toDoListId ]
+                        .map(task => task.id === action.payload.taskId ? {
+                            ...task,
+                            isDone: action.payload.isDone,
+                        } : task),
+                },
+            }
+        case types.SET_NEW_TASK_TITLE:
+            return {
+                ...state,
+                newTaskTitle: action.payload.newTaskTitle,
             }
         default:
-            throw new Error(`I don't understand this action type`)
+            return state
     }
 }

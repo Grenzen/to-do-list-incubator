@@ -10,7 +10,7 @@ export type AddItemFormTypes = {
     addToDoListCallback?: (title: string) => void
 }
 
-export const AddItemForm: React.FC<AddItemFormTypes> = (
+export const AddItemForm: React.FC<AddItemFormTypes> = React.memo((
     {
         value, setValueCallback,
         toDoListId, addTaskCallback,
@@ -58,4 +58,4 @@ export const AddItemForm: React.FC<AddItemFormTypes> = (
             </div>
         </>
     )
-}
+})

@@ -14,7 +14,7 @@ type ToDoItemPropTypes = {
     changeTaskTitleCallback: (taskId: string, title: string, toDoListId: string) => void
 }
 
-export const ToDoItem: React.FC<ToDoItemPropTypes> = (
+export const ToDoItem: React.FC<ToDoItemPropTypes> = React.memo((
     {
         taskId, toDoListId,
         title, isDone,
@@ -48,4 +48,4 @@ export const ToDoItem: React.FC<ToDoItemPropTypes> = (
             </div>
         </div>
     )
-}
+})

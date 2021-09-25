@@ -1,38 +1,51 @@
-import React, { useState, MouseEvent } from 'react'
+import React, { MouseEvent, useMemo } from 'react'
 import { ToDoItem } from '../ToDoItem/ToDoItem'
-import { FilterPropTypes, TaskTypes } from '../../App'
+import { TaskTypes } from '../../state/reducers/tasks'
 import { AddItemForm } from '../AddItemForm/AddItemForm'
 import { EditableTitle } from '../EditableTitle/EditableTitle'
 import { Button, Grid, IconButton, Paper } from '@material-ui/core'
 import { Delete } from '@material-ui/icons'
-
+import { useAppDispatch } from '../../state'
+import * as todolistsActions from '../../state/actions/todoLists'
+import * as tasksActions from '../../state/actions/tasks'
+import { FilterPropTypes } from '../../state/reducers/taskFilter'
+import { useSelector } from 'react-redux'
+import { newTaskTitleSelector } from '../../state/selectors/tasks'
 
 export type ToDoListPropTypes = {
     toDoListId: string
     filter: FilterPropTypes
     title: string
     tasks: Array<TaskTypes>
-    changeFilterCallback: (filter: FilterPropTypes, toDoListId: string) => void
     addTaskCallback: (title: string, toDoListId: string) => void
     deleteTaskCallback: (taskId: string, toDoListId: string) => void
     changeSelectedCallback: (taskId: string, select: boolean, toDoListId: string) => void
-    deleteToDoListCallback: (toDoListId: string) => void
     changeToDoListTitleCallback: (title: string, toDoListId: string) => void
     changeTaskTitleCallback: (taskId: string, title: string, toDoListId: string) => void
 }
 
-export const ToDoList: React.FC<ToDoListPropTypes> = (
+export const ToDoList: React.FC<ToDoListPropTypes> = React.memo((
     {
         toDoListId, filter, title, tasks,
-        changeFilterCallback, deleteTaskCallback,
+        deleteTaskCallback,
         addTaskCallback, changeSelectedCallback,
-        deleteToDoListCallback, changeToDoListTitleCallback,
+        changeToDoListTitleCallback,
         changeTaskTitleCallback,
     }) => {
 
-    const [newTitle, setNewTitle] = useState<string>('')
+    const newTaskTitle = useSelector(newTaskTitleSelector)
+    const dispatch = useAppDispatch()
+    const setNewTaskTitleCallback = (newTaskTitle: string) => dispatch(tasksActions.setNewTaskTitle(newTaskTitle))
+    const changeFilter = (event: MouseEvent<HTMLButtonElement>) => {
+        const value = event.currentTarget.innerText
+        dispatch(todolistsActions.changeTodoListFilter(toDoListId, value as FilterPropTypes))
+    }
+    const deleteToDoList = () => {
+        dispatch(todolistsActions.removeTodoList(toDoListId))
+        dispatch(tasksActions.removeTasksArray(toDoListId))
+    }
 
-    const mappedTasks = tasks.map((task) => (
+    const mappedTasks = useMemo(() => tasks.map((task) => (
         <ToDoItem
             key={ task.id }
             taskId={ task.id }
@@ -43,20 +56,13 @@ export const ToDoList: React.FC<ToDoListPropTypes> = (
             changeSelectedCallback={ changeSelectedCallback }
             changeTaskTitleCallback={ changeTaskTitleCallback }
         />
-    ))
-
-    const changeFilter = (event: MouseEvent<HTMLButtonElement>) => {
-        const value = event.currentTarget.innerText
-        changeFilterCallback(value as FilterPropTypes, toDoListId)
-    }
-
-    const deleteToDoListId = () => deleteToDoListCallback(toDoListId)
+    )), [tasks, toDoListId, deleteTaskCallback, changeSelectedCallback, changeTaskTitleCallback])
 
     return (
         <Grid item>
             <Paper style={ { padding: '10px' } }>
                 <h3>
-                    <IconButton tabIndex={ toDoListId } onClick={ deleteToDoListId }>
+                    <IconButton tabIndex={ toDoListId } onClick={ deleteToDoList }>
                         <Delete/>
                     </IconButton>
                     <EditableTitle
@@ -66,9 +72,9 @@ export const ToDoList: React.FC<ToDoListPropTypes> = (
                     />
                 </h3>
                 <AddItemForm
-                    value={ newTitle }
+                    value={ newTaskTitle }
                     toDoListId={ toDoListId }
-                    setValueCallback={ setNewTitle }
+                    setValueCallback={ setNewTaskTitleCallback }
                     addTaskCallback={ addTaskCallback }
                 />
                 { mappedTasks }
@@ -98,4 +104,4 @@ export const ToDoList: React.FC<ToDoListPropTypes> = (
             </Paper>
         </Grid>
     )
-}
+})

@@ -9,7 +9,7 @@ type EditableTitleTypes = {
     changeTaskTitleCallback?: (taskId: string, title: string, toDoListId: string) => void
 }
 
-export const EditableTitle: React.FC<EditableTitleTypes> = (
+export const EditableTitle: React.FC<EditableTitleTypes> = React.memo((
     {
         title, toDoListId, taskId,
         changeToDoListTitleCallback, changeTaskTitleCallback,
@@ -41,4 +41,4 @@ export const EditableTitle: React.FC<EditableTitleTypes> = (
         : <span
             onDoubleClick={ activateEditMode }
         >{ localTitle }</span>
-}
+})

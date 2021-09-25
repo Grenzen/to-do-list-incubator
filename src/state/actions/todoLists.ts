@@ -1,5 +1,14 @@
-import * as types from '../types/todolists'
-import { FilterPropTypes } from '../../App'
+import * as types from '../types/todoLists'
+import { FilterPropTypes } from '../reducers/taskFilter'
+
+type RemoveTodosType = ReturnType<typeof removeTodoList>
+type AddTodosType = ReturnType<typeof addTodoList>
+type ChangeTodosTitleType = ReturnType<typeof changeTodoListTitle>
+type ChangeTodosFilterType = ReturnType<typeof changeTodoListFilter>
+type SetNewTodoListTitleType = ReturnType<typeof setNewTodoListTitle>
+export type ActionTodoListsType =
+    RemoveTodosType | AddTodosType | ChangeTodosTitleType
+    | ChangeTodosFilterType | SetNewTodoListTitleType
 
 export const removeTodoList = (todolistId: string) => ({
     type: types.REMOVE_TODOLIST,
@@ -31,4 +40,9 @@ export const changeTodoListFilter = (todolistId: string, newFilter: FilterPropTy
         todolistId,
         newFilter,
     },
+} as const)
+
+export const setNewTodoListTitle = (newTodoListTitle: string) => ({
+    type: types.SET_NEW_TODOLIST_TITLE,
+    payload: { newTodoListTitle },
 } as const)

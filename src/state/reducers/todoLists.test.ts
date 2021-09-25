@@ -1,5 +1,5 @@
-import { todolistsReducer } from './todolists'
-import * as actions from '../actions/todolists'
+import { todolistsReducer } from './todoLists'
+import * as actions from '../actions/todoLists'
 import { v1 } from 'uuid'
 import { FilterPropTypes, ToDoListTypes } from '../../App'
 

@@ -1,3 +1,4 @@
-export const ALL = 'ALL'
-export const ACTIVE = 'ACTIVE'
-export const COMPLETED = 'COMPLETED'
+export const ALL = 'TASK_FILTER/ALL'
+export const ACTIVE = 'TASK_FILTER/ACTIVE'
+export const COMPLETED = 'TASK_FILTER/COMPLETED'
+export const SET_TASK_ARRAY = 'TASK_FILTER/SET_TASKS_ARRAY'
